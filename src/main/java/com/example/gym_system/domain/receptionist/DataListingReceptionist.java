@@ -1,4 +1,4 @@
 package com.example.gym_system.domain.receptionist;
 
-public record DataListingReceptionist(String name) {
+public record DataListingReceptionist(Long id, String name) {
 }
