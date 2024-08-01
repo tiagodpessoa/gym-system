@@ -4,6 +4,8 @@ import com.example.gym_system.domain.instructor.*;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -29,8 +31,8 @@ public class InstructorController {
     }
 
     @GetMapping
-    public ResponseEntity<List<DataInstructor>> getAllInstructors(){
-        return ResponseEntity.ok(service.findAllInstructors());
+    public ResponseEntity getAllInstructors(@PageableDefault(size = 10, sort = {"name"}) Pageable pageable){
+        return ResponseEntity.ok(service.findAllInstructors(pageable));
     }
 
 

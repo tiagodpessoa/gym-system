@@ -1,12 +1,14 @@
 package com.example.gym_system.domain.receptionist;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.net.URI;
-import java.util.List;
 import java.util.Optional;
+
 
 @Service
 public class ReceptionistService {
@@ -30,10 +32,9 @@ public class ReceptionistService {
         return ResponseEntity.ok().build();
     }
 
-    public ResponseEntity getAllReceptionists(){
-         List<DataListingReceptionist> listingReceptionists = repository.findAll()
-                .stream()
-                .map(receptionist -> new DataListingReceptionist(receptionist.getId(), receptionist.getName())).toList();
+    public ResponseEntity getAllReceptionists(Pageable pageable){
+         Page<DataListingReceptionist> listingReceptionists = repository.findAll(pageable)
+                .map(receptionist -> new DataListingReceptionist(receptionist.getId(), receptionist.getName()));
          return ResponseEntity.ok(listingReceptionists);
     }
 
@@ -48,6 +49,5 @@ public class ReceptionistService {
                 rcp.getId(),
                 rcp.getName()))));
     }
-
 
 }
