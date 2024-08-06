@@ -23,6 +23,9 @@ public class Client {
     private LocalDate birthdate;
     private Integer age;
     private Plan plan;
+    private LocalDate dateStart;
+    private LocalDate dateEnd;
+
 
     public Client(DataClientRegister data) {
         this.name = data.name();

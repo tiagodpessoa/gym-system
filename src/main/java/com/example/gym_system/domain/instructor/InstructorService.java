@@ -1,14 +1,11 @@
 package com.example.gym_system.domain.instructor;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.net.URI;
-import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -24,8 +21,8 @@ public class InstructorService {
         return ResponseEntity.created(location).build();
     }
 
-    public ResponseEntity updateAnExistingInstructor(DataInstructor data){
-        Optional<Instructor> originalInstructor = repository.findById(data.id());
+    public ResponseEntity updateAnExistingInstructor(Long id, DataInstructor data){
+        Optional<Instructor> originalInstructor = repository.findById(id);
         if(originalInstructor.isPresent()) {
             Instructor instructorUpdated = originalInstructor.get();
             if (data.name() != null) instructorUpdated.setName(data.name());
@@ -36,14 +33,14 @@ public class InstructorService {
         return ResponseEntity.notFound().build();
     }
 
-    public Page<DataInstructor> findAllInstructors(Pageable pageable){
-        return repository.findAll(pageable)
-                .map(instructor -> new DataInstructor(instructor.getId(), instructor.getName(), instructor.getCref()));
+    public ResponseEntity findAllInstructors(Pageable pageable){
+        return ResponseEntity.ok(repository.findAll(pageable)
+                .map(instructor -> new DataInstructor(instructor.getId(), instructor.getName(), instructor.getCref())));
     }
 
-    public Optional<DataInstructor> findAInstructorById(Long id) {
-        return repository.findById(id)
-                .map(instructor -> new DataInstructor(instructor.getId(), instructor.getName(), instructor.getCref()));
+    public ResponseEntity findAInstructorById(Long id) {
+        return ResponseEntity.of(repository.findById(id)
+                .map(instructor -> new DataInstructor(instructor.getId(), instructor.getName(), instructor.getCref())));
     }
 
     public ResponseEntity deleteAnInstructorById(Long id){

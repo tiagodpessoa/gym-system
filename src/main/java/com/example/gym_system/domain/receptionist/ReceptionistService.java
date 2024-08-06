@@ -23,8 +23,8 @@ public class ReceptionistService {
         return ResponseEntity.created(location).build();
     }
 
-    public ResponseEntity updateAnExistingReceptionist(DataReceptionist dataReceptionist){
-        Optional<Receptionist> rcp = repository.findById(dataReceptionist.id());
+    public ResponseEntity updateAnExistingReceptionist(Long id, DataReceptionist dataReceptionist){
+        Optional<Receptionist> rcp = repository.findById(id);
         if (rcp.isEmpty()) return ResponseEntity.notFound().build();
         Receptionist rcpOriginal = rcp.get();
         if(dataReceptionist.name() != null) rcpOriginal.setName(dataReceptionist.name());

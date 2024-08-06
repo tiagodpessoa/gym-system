@@ -17,12 +17,9 @@ public class ReceptionistController {
     @Autowired
     ReceptionistService service;
 
-    @Autowired
-    private ReceptionistRepository repository;
-
     @PostMapping
     @Transactional
-    public ResponseEntity<?> registerAReceptionist(@RequestBody @Valid DataReceptionistRegister data){
+    public ResponseEntity registerAReceptionist(@RequestBody @Valid DataReceptionistRegister data){
         return service.createAReceptionistRegister(data);
     }
 
@@ -36,10 +33,10 @@ public class ReceptionistController {
         return service.getAllReceptionists(pageable);
     }
 
-    @PutMapping
+    @PutMapping("/{id}")
     @Transactional
-    public ResponseEntity updateAReceptionist(@RequestBody @Valid DataReceptionist dataReceptionist){
-        return service.updateAnExistingReceptionist(dataReceptionist);
+    public ResponseEntity updateAReceptionist(@PathVariable Long id, @Valid @RequestBody DataReceptionist dataReceptionist){
+        return service.updateAnExistingReceptionist(id ,dataReceptionist);
     }
 
     @DeleteMapping("/{id}")

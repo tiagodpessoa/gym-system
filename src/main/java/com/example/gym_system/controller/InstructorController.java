@@ -9,7 +9,6 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 
 @RestController
 @RequestMapping("/instrutor")
@@ -24,21 +23,21 @@ public class InstructorController {
         return service.createAInstructor(data);
     }
 
-    @PutMapping
+    @PutMapping("/{id}")
     @Transactional
-    public ResponseEntity updateAInstructor(@RequestBody @Valid DataInstructor data) {
-        return service.updateAnExistingInstructor(data);
+    public ResponseEntity updateAInstructor(@PathVariable Long id, @Valid @RequestBody DataInstructor data) {
+        return service.updateAnExistingInstructor(id, data);
     }
 
     @GetMapping
     public ResponseEntity getAllInstructors(@PageableDefault(size = 10, sort = {"name"}) Pageable pageable){
-        return ResponseEntity.ok(service.findAllInstructors(pageable));
+        return service.findAllInstructors(pageable);
     }
 
 
     @GetMapping("/{id}")
-    public ResponseEntity<DataInstructor> getAInstructorById(@PathVariable Long id){
-        return ResponseEntity.of(service.findAInstructorById(id));
+    public ResponseEntity getAInstructorById(@PathVariable Long id){
+        return service.findAInstructorById(id);
     }
 
     @DeleteMapping("/{id}")

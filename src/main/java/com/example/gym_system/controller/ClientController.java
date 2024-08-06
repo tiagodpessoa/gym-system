@@ -6,6 +6,8 @@ import com.example.gym_system.domain.client.DataClientRegister;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -16,20 +18,26 @@ public class ClientController {
     @Autowired
     private ClientService service;
 
-    @PostMapping
-    @Transactional
-    public ResponseEntity registerAClient(@RequestBody @Valid DataClientRegister data){
-        return service.createAClient(data);
-    }
-
     @GetMapping
-    public ResponseEntity listAllClients(){
-        return service.getAllClients();
+    public ResponseEntity getAllClients(@PageableDefault(size = 30, sort = {"name"}) Pageable pageable){
+        return service.getAllClients(pageable);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity listAllClients(@PathVariable Long id){
+    public ResponseEntity getAClientById(@PathVariable Long id){
         return service.getAClientById(id);
+    }
+
+    @PostMapping
+    @Transactional
+    public ResponseEntity createANewClient(@Valid @RequestBody DataClientRegister data){
+        return service.createAClient(data);
+    }
+
+    @PutMapping("/{id}")
+    @Transactional
+    public ResponseEntity updateAClient(@PathVariable Long id, @RequestBody @Valid DataClient dataClient){
+        return service.updateAnExistingClient(id, dataClient);
     }
 
     @DeleteMapping("/{id}")
@@ -38,10 +46,9 @@ public class ClientController {
         return service.deleteAClientById(id);
     }
 
-    @PutMapping
+    @PatchMapping("/{id}")
     @Transactional
-    public ResponseEntity updateAClient(@RequestBody @Valid DataClient dataClient){
-        return service.updateAnExistingClient(dataClient);
+    public ResponseEntity clientPayment(@PathVariable Long id){
+        return service.toPay(id);
     }
-
 }
