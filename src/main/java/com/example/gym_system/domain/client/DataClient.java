@@ -9,6 +9,7 @@ public record DataClient(
         Long id,
         String name,
         String phone,
+        Integer age,
         String cpf,
         LocalDate birthdate,
         Plan plan,

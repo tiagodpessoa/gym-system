@@ -2,6 +2,7 @@ package com.example.gym_system.controller;
 
 
 import com.example.gym_system.domain.receptionist.*;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/recepcionista")
+@SecurityRequirement(name = "bearer-key")
 public class ReceptionistController {
 
     @Autowired

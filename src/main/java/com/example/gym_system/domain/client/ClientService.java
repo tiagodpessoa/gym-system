@@ -1,5 +1,6 @@
 package com.example.gym_system.domain.client;
 
+import com.example.gym_system.infra.exception.NoChangeToUpdateException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
@@ -19,8 +20,6 @@ public class ClientService {
 
     public ResponseEntity createAClient(DataClientRegister data) {
         var newClient = new Client(data);
-        newClient.setDateStart(LocalDate.now());
-        newClient.setDateEnd(LocalDate.now().plusMonths(1));
         repository.save(newClient);
         URI location = URI.create("http://localhost:8080/cliente/" + newClient.getId());
         return ResponseEntity.created(location).build();
@@ -41,10 +40,12 @@ public class ClientService {
     public ResponseEntity getAClientById(Long id) {
         if (!repository.existsById(id)) return ResponseEntity.notFound().build();
         var dataClient = repository.findById(id).get();
-        return ResponseEntity.ok(new DataClient(id, dataClient.getName(), dataClient.getPhone(), dataClient.getCpf(), dataClient.getBirthdate(), dataClient.getPlan(), dataClient.getDateEnd()));
+        return ResponseEntity.ok(new DataClient(id, dataClient.getName(), dataClient.getPhone(), dataClient.getAge(), dataClient.getCpf(), dataClient.getBirthdate(), dataClient.getPlan(), dataClient.getDateEnd()));
     }
 
+
     public ResponseEntity updateAnExistingClient(Long id, DataClient data) {
+        if(verifyDataClientToUpdate(data)) throw new NoChangeToUpdateException();
         Optional<Client> optionalClient = repository.findById(id);
         if (optionalClient.isEmpty()) return ResponseEntity.notFound().build();
         Client updatedClient = optionalClient.get();
@@ -63,9 +64,18 @@ public class ClientService {
     public ResponseEntity toPay(Long id){
         Optional<Client> client = repository.findById(id);
         if(client.isEmpty()) return ResponseEntity.notFound().build();
-        client.get().setDateEnd(client.get().getDateEnd().plusMonths(1));
-        client.get().setDateStart(LocalDate.now());
+        if(client.get().getDateEnd().isAfter(LocalDate.now())){
+            client.get().setDateEnd(LocalDate.now().plusMonths(1));
+            client.get().setDateStart(LocalDate.now());
+        }else {
+            client.get().setDateEnd(client.get().getDateEnd().plusMonths(1));
+            client.get().setDateStart(LocalDate.now());
+        }
         return ResponseEntity.ok().build();
+    }
+
+    public boolean verifyDataClientToUpdate(DataClient dataClient){
+        return dataClient.name() == null && dataClient.phone() == null && dataClient.birthdate() == null && dataClient.cpf() == null;
     }
 
 }

@@ -3,6 +3,8 @@ package com.example.gym_system.controller;
 import com.example.gym_system.domain.client.ClientService;
 import com.example.gym_system.domain.client.DataClient;
 import com.example.gym_system.domain.client.DataClientRegister;
+import com.example.gym_system.infra.exception.NoChangeToUpdateException;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/cliente")
+@SecurityRequirement(name = "bearer-key")
 public class ClientController {
 
     @Autowired
@@ -36,7 +39,7 @@ public class ClientController {
 
     @PutMapping("/{id}")
     @Transactional
-    public ResponseEntity updateAClient(@PathVariable Long id, @RequestBody @Valid DataClient dataClient){
+    public ResponseEntity updateAClient(@PathVariable Long id, @RequestBody @Valid DataClient dataClient) {
         return service.updateAnExistingClient(id, dataClient);
     }
 

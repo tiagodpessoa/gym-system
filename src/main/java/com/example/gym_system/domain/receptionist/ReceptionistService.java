@@ -1,10 +1,12 @@
 package com.example.gym_system.domain.receptionist;
 
+import com.example.gym_system.infra.exception.NoChangeToUpdateException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 
 import java.net.URI;
 import java.util.Optional;
@@ -24,12 +26,14 @@ public class ReceptionistService {
     }
 
     public ResponseEntity updateAnExistingReceptionist(Long id, DataReceptionist dataReceptionist){
+        if(dataReceptionist.name() == null) throw new NoChangeToUpdateException();
         Optional<Receptionist> rcp = repository.findById(id);
         if (rcp.isEmpty()) return ResponseEntity.notFound().build();
         Receptionist rcpOriginal = rcp.get();
-        if(dataReceptionist.name() != null) rcpOriginal.setName(dataReceptionist.name());
+        rcpOriginal.setName(dataReceptionist.name());
         repository.save(rcpOriginal);
         return ResponseEntity.ok().build();
+
     }
 
     public ResponseEntity getAllReceptionists(Pageable pageable){
@@ -49,5 +53,4 @@ public class ReceptionistService {
                 rcp.getId(),
                 rcp.getName()))));
     }
-
 }

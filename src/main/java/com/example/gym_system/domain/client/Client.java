@@ -34,5 +34,7 @@ public class Client {
         this.birthdate = data.birthdate();
         this.age = Period.between(birthdate, LocalDate.now()).getYears();
         this.plan = data.plan();
+        this.dateStart = LocalDate.now();
+        this.dateEnd = LocalDate.now().plusMonths(1);
     }
 }

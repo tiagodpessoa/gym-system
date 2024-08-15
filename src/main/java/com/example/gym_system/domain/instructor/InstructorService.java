@@ -1,5 +1,6 @@
 package com.example.gym_system.domain.instructor;
 
+import com.example.gym_system.infra.exception.NoChangeToUpdateException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
@@ -21,16 +22,15 @@ public class InstructorService {
         return ResponseEntity.created(location).build();
     }
 
-    public ResponseEntity updateAnExistingInstructor(Long id, DataInstructor data){
+    public ResponseEntity updateAnExistingInstructor(Long id, DataInstructor data) {
+        if(verifyDataInstructorToUpdate(data)) throw new NoChangeToUpdateException();
         Optional<Instructor> originalInstructor = repository.findById(id);
-        if(originalInstructor.isPresent()) {
-            Instructor instructorUpdated = originalInstructor.get();
-            if (data.name() != null) instructorUpdated.setName(data.name());
-            if (data.cref() != null) instructorUpdated.setCref(data.cref());
-            repository.save(instructorUpdated);
-            return ResponseEntity.ok().build();
-        }
-        return ResponseEntity.notFound().build();
+        if (originalInstructor.isEmpty()) return ResponseEntity.notFound().build();
+        Instructor instructorUpdated = originalInstructor.get();
+        if (data.name() != null) instructorUpdated.setName(data.name());
+        if (data.cref() != null) instructorUpdated.setCref(data.cref());
+        repository.save(instructorUpdated);
+        return ResponseEntity.ok().build();
     }
 
     public ResponseEntity findAllInstructors(Pageable pageable){
@@ -47,5 +47,9 @@ public class InstructorService {
         if(!repository.existsById(id)) return ResponseEntity.notFound().build();
         repository.deleteById(id);
         return ResponseEntity.noContent().build();
+    }
+
+    public boolean verifyDataInstructorToUpdate(DataInstructor data){
+        return data.name() == null && data.cref() == null;
     }
 }
